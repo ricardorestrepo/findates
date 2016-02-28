@@ -258,6 +258,9 @@ class DaycountTestCase(unittest.TestCase):
         self.assertEquals(daydiff('31 Jan 2002', '28 Feb 2002', '30e+/360'), 28)
         self.assertEquals(daydiff('31 Jan 2004', '29 Feb 2004', '30e+/360'), 29)
 
+    def test_supported_daycount_convention(self):
+        self.assertTrue(supported_daycount_convention('ACTUAL/360'))
+        self.assertFalse(supported_daycount_convention('ACTUAL/3608'))
 
 if __name__ == "__main__":
     nose.main()

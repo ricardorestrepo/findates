@@ -52,6 +52,14 @@ _dc_norm = dict({
     'ACT/ACT AFB': 'ACTUAL/ACTUAL AFB'
 })
 
+
+def supported_daycount_convention(convention):
+    try:
+        _normalize_daycount_convention(convention)
+        return True
+    except KeyError:
+        return False
+
 def _normalize_daycount_convention(convention):
     convention = convention.upper()
     return _dc_norm[convention]
@@ -73,7 +81,6 @@ def _daycount_parameters(dt1, dt2, convention, **kwargs):
     """ Return number of days and total number of days (i.e. numerator and
         denominator in the counting of year fraction between dates
     """
-    convention = convention.upper()
     convention = _normalize_daycount_convention(convention)
     dt1 = dateutils.asdatetime(dt1)
     dt2 = dateutils.asdatetime(dt2)
@@ -196,7 +203,7 @@ def yearfractions(dates, convention, **kwargs):
     return map(lambda x: yearfrac(dates[0], x, convention, **kwargs), dts)
 
 def daydiff(dt1, dt2, convention, **kwargs):
-    """ Calculate difference in days between tow days according to a given
+    """ Calculate difference in days between two dates according to a given
         daycount convention
     """
     return _daycount_parameters(dt1, dt2, convention, **kwargs)[0]
