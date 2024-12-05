@@ -1,6 +1,5 @@
 
 import datetime
-import string
 
 # Not that we expect that number of days in the week changes any time soon
 # but having symbolic name in the source code is more descriptive and easier to search
@@ -53,7 +52,7 @@ def sniff_datetime_format(dtstr):
     """ Try to recognize date representation format from the date string
     """
     dtstr = dtstr.lower()
-    ttab = string.maketrans("0123456789abcdefghijklmnopqrstuvwxyz", "ddddddddddLLLLLLLLLLLLLLLLLLLLLLLLLL")
+    ttab = str.maketrans("0123456789abcdefghijklmnopqrstuvwxyz", "ddddddddddLLLLLLLLLLLLLLLLLLLLLLLLLL")
     fmtstring = dtstr.translate(ttab)
     if fmtstring in _datetime_format_strings:
         return _datetime_format_strings[fmtstring]

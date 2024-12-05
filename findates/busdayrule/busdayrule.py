@@ -5,7 +5,7 @@ Where to move payment if payment day falls on a holiday
 
 import datetime
 
-import dateutils
+from findates.dateutils import asdatetime, eom
 
 def _roll_forward(dt, calendar):
     rolled = dt
@@ -41,7 +41,7 @@ def rolldate(dt, calendar, convention):
     datetime.datetime of the next business day according to the convention
     """
     convention = convention.lower()
-    dt = dateutils.asdatetime(dt)
+    dt = asdatetime(dt)
     rolled = dt
     if convention == "follow":
         rolled = _roll_forward(dt, calendar)
@@ -60,7 +60,7 @@ def rolldate(dt, calendar, convention):
 def lbusdate(year, month, calendar):
     """ Last business day of the month
     """
-    dt = dateutils.eom(year, month)
+    dt = eom(year, month)
     return _roll_backward(dt, calendar)
 
 def fbusdate(year, month, calendar):

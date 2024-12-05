@@ -2,7 +2,7 @@
 import collections
 import datetime
 
-import dateutils
+from findates.dateutils import DAYS_IN_WEEK, asdatetime, eom
 
 class OrderMapper:
 
@@ -184,7 +184,7 @@ idiosyncratic_holidays = dict({
 
 class Calendar:
     def __init__(self):
-        self._weekdays = [True] * dateutils.DAYS_IN_WEEK
+        self._weekdays = [True] * DAYS_IN_WEEK
         self._dated_holidays = collections.defaultdict(dict)
         self._numbered_weekday_holidays = collections.defaultdict(set)
         self._holiday_cache = collections.defaultdict(set)
@@ -270,7 +270,7 @@ class Calendar:
     def is_holiday(self, dt):
         """ Check if specific date is holiday
         """
-        dt = dateutils.asdatetime(dt)
+        dt = asdatetime(dt)
         year = dt.year
         if not year in self._holiday_cache:
             # create year cache
@@ -331,11 +331,11 @@ class Calendar:
                 # n-th day of the month holidays are usually not moved
                 # as they always happen on a particular day of the week
                 if dt.weekday() == weekday:
-                    if order > 0 and (((dt.day-1)//dateutils.DAYS_IN_WEEK+1) == order):
+                    if order > 0 and (((dt.day-1) // DAYS_IN_WEEK+1) == order):
                         return True, name, None
                     if order == -1:
                         # last weekday of the month
-                        eom_day = dateutils.eom(dt.year, dt.month)
+                        eom_day = eom(dt.year, dt.month)
                         if dt == weekday_on_or_before(eom_day, weekday):
                             return True, name, None
 

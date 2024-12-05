@@ -3,7 +3,7 @@ import datetime
 # TODO
 # * refactor out alias lookup module
 
-import dateutils
+from findates.dateutils import asdatetime, eom, iseom, leapyear, yeardays
 
 _dc_norm = dict({
     '30/360 US': '30/360 US',
@@ -69,7 +69,7 @@ def _period_has_29feb(dt1, dt2):
     y1 = dt1.year
     y2 = dt2.year
     for y in range(y1, y2+1):
-        if dateutils.leapyear(y) and (
+        if leapyear(y) and (
             (y!=y1 and y!=y2)
             or (y == y1 and dt1<datetime.datetime(y1, 2, 29))
             or (y == y2 and datetime.datetime(y2, 2, 29) <= dt2)):
@@ -82,8 +82,8 @@ def _daycount_parameters(dt1, dt2, convention, **kwargs):
         denominator in the counting of year fraction between dates
     """
     convention = _normalize_daycount_convention(convention)
-    dt1 = dateutils.asdatetime(dt1)
-    dt2 = dateutils.asdatetime(dt2)
+    dt1 = asdatetime(dt1)
+    dt2 = asdatetime(dt2)
     y1, m1, d1 = dt1.year, dt1.month, dt1.day
     y2, m2, d2 = dt2.year, dt2.month, dt2.day
     factor = None
@@ -93,9 +93,9 @@ def _daycount_parameters(dt1, dt2, convention, **kwargs):
 
         if convention == '30/360 US':
             # US adjustments
-            if eom and dt1.month == 2 and dateutils.iseom(dt1) and dt2.month == 2 and dateutils.iseom(dt2):
+            if eom and dt1.month == 2 and iseom(dt1) and dt2.month == 2 and iseom(dt2):
                 d2 = 30
-            if eom and dt1.month == 2 and dateutils.iseom(dt1):
+            if eom and dt1.month == 2 and iseom(dt1):
                 d1 = 30
             if d2 == 31 and d1>=30:
                 d2 = 30
@@ -107,9 +107,9 @@ def _daycount_parameters(dt1, dt2, convention, **kwargs):
             if d2 == 31:
                 d2 = 30
         elif convention == '30E/360 ISDA':
-            if dateutils.iseom(dt1):
+            if iseom(dt1):
                 d1 = 30
-            if dateutils.iseom(dt2) and m2 != 2:
+            if iseom(dt2) and m2 != 2:
                 d2 = 30
         elif convention == '30E+/360':
             if d1 == 31:
@@ -130,25 +130,25 @@ def _daycount_parameters(dt1, dt2, convention, **kwargs):
 
         if y2 == y1:
             num_days = (dt2 - dt1).days
-            year_days = dateutils.yeardays(y1)
+            year_days = yeardays(y1)
         else:
             # we need to calculate factor properly
             factor = 0.0
             # full years between y1 and y2 exclusive
             for y in range(y1+1, y2):
-                yd = dateutils.yeardays(y)
+                yd = yeardays(y)
                 num_days += yd
                 year_days += yd
                 factor += float(num_days)/year_days
             # days in the remaining part of the first year
             num = (datetime.datetime(y1+1, 1, 1) - dt1).days
-            den = dateutils.yeardays(y1)
+            den = yeardays(y1)
             num_days += num
             year_days += den
             factor += float(num)/den
             # days in the beginning of the last year
             num = (dt2 - datetime.datetime(y2, 1, 1)).days
-            den = dateutils.yeardays(y2)
+            den = yeardays(y2)
             num_days += num
             year_days += den
             factor += float(num)/den
@@ -164,7 +164,7 @@ def _daycount_parameters(dt1, dt2, convention, **kwargs):
         if yearly_frequency:
             year_days = 366 if _period_has_29feb(dt1, dt2) else 365
         else:
-            year_days = 366 if dateutils.leapyear(dt2) else 365
+            year_days = 366 if leapyear(dt2) else 365
         num_days = (dt2-dt1).days
     elif convention == 'ACTUAL/ACTUAL AFB':
         year_days = 366 if _period_has_29feb(dt1, dt2) else 365
@@ -199,7 +199,7 @@ def yearfractions(dates, convention, **kwargs):
     """
     if not dates:
         return []
-    dts = map(dateutils.asdatetime, dates)
+    dts = map(asdatetime, dates)
     return map(lambda x: yearfrac(dates[0], x, convention, **kwargs), dts)
 
 def daydiff(dt1, dt2, convention, **kwargs):
