@@ -6,7 +6,7 @@ setup(
     description = 'Dealing with dates in finance',
     author='Artem Frolov (Amelanche Inc.)',
     author_email='findates@artemfrolov.fastmail.fm',
-    packages=['findates', 'findates.test'],
+    packages=['findates', 'findates.test', 'findates.daycount', 'findates.dateutils', 'findates.busdayrule', 'findates.holidays'],
     license='OSI Approved',
     long_description=open('README.txt').read(),
     classifiers = [
@@ -25,4 +25,5 @@ setup(
         'Topic :: Office/Business :: Financial',
     ]
 )
+
 
